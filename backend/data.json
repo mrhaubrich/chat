@@ -1,0 +1,134 @@
+[
+    {
+        "model": "chat.user",
+        "pk": 1,
+        "fields": {
+            "password": "pbkdf2_sha256$390000$DD8NpZjZzknfskat2NTo3o$evBTbpTDnormqs6w6ZBVE0hYdh2mh02gKSnupP46zkU=",
+            "last_login": "2023-02-17T14:50:23.547Z",
+            "is_superuser": true,
+            "username": "teste",
+            "first_name": "",
+            "last_name": "",
+            "email": "teste@teste.com",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2023-02-17T14:07:19.997Z",
+            "last_seen": "2023-02-17T14:07:20.194Z",
+            "is_online": false,
+            "channels_token": "",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "chat.user",
+        "pk": 4,
+        "fields": {
+            "password": "pbkdf2_sha256$390000$fv8WKMTK46QP3F0VW63H1m$xNbSez1GJJcI5mdE4gPc6+p+nBraTDb39lLr4yr0n2I=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "marhaubrich",
+            "first_name": "",
+            "last_name": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2023-02-17T14:50:05.918Z",
+            "last_seen": "2023-02-17T14:50:06.119Z",
+            "is_online": false,
+            "channels_token": "",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "chat.message",
+        "pk": 1,
+        "fields": {
+            "message": "a",
+            "timestamp": "2023-02-20T18:24:58.551Z",
+            "edited_timestamp": "2023-02-20T18:24:58.551Z",
+            "user": 4
+        }
+    },
+    {
+        "model": "chat.message",
+        "pk": 2,
+        "fields": {
+            "message": "batata",
+            "timestamp": "2023-02-20T18:27:46.883Z",
+            "edited_timestamp": "2023-02-20T18:27:46.884Z",
+            "user": 4
+        }
+    },
+    {
+        "model": "chat.message",
+        "pk": 3,
+        "fields": {
+            "message": "sim",
+            "timestamp": "2023-02-20T19:59:48.896Z",
+            "edited_timestamp": "2023-02-20T19:59:48.896Z",
+            "user": 4
+        }
+    },
+    {
+        "model": "chat.message",
+        "pk": 4,
+        "fields": {
+            "message": "sim",
+            "timestamp": "2023-02-20T20:03:55.732Z",
+            "edited_timestamp": "2023-02-20T20:03:55.732Z",
+            "user": 4
+        }
+    },
+    {
+        "model": "chat.message",
+        "pk": 5,
+        "fields": {
+            "message": "mano que merda",
+            "timestamp": "2023-02-20T20:04:03.696Z",
+            "edited_timestamp": "2023-02-20T20:04:03.696Z",
+            "user": 4
+        }
+    },
+    {
+        "model": "chat.message",
+        "pk": 6,
+        "fields": {
+            "message": "mano que merda editado",
+            "timestamp": "2023-02-20T20:11:47.353Z",
+            "edited_timestamp": "2023-02-20T20:11:47.353Z",
+            "user": 4
+        }
+    },
+    {
+        "model": "chat.room",
+        "pk": 5,
+        "fields": {
+            "name": "Sala Teste",
+            "users": [
+                1,
+                4
+            ],
+            "messages": [
+                6,
+                5,
+                4,
+                3,
+                2,
+                1
+            ]
+        }
+    },
+    {
+        "model": "chat.room",
+        "pk": 6,
+        "fields": {
+            "name": "aaaa",
+            "users": [
+                1
+            ],
+            "messages": []
+        }
+    }
+]
