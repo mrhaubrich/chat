@@ -16,7 +16,7 @@ Including another URLconf
 from signal import pause
 
 from channels.routing import ProtocolTypeRouter, URLRouter
-from chat.views import CreateUserView, RoomViewSet
+from chat.views import CreateUserView, RoomViewSet, index, teste
 from django.contrib import admin
 from django.urls import path, re_path
 
@@ -37,5 +37,6 @@ urlpatterns = [
         'post': 'send_message'
     })),
     path('create_user/', CreateUserView.as_view()),
-    # path to channel listen
+    path('', index),
+    re_path(r'^chat/(?P<room_name>\w+)/$', teste),
 ]

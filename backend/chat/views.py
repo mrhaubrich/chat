@@ -1,5 +1,6 @@
 from chat.serializers import MessageSerializer, RoomSerializer, UserSerializer
 from django.conf import settings
+from django.shortcuts import render
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.decorators import action, schema
 from rest_framework.permissions import IsAuthenticated
@@ -77,3 +78,11 @@ class CreateUserView(generics.CreateAPIView):
         instance = serializer.save()
         instance.set_password(instance.password)
         instance.save()
+
+def index(request):
+    return render(request, "chat/index.html")
+
+def teste(request, room_name):
+    return render(request, "chat/teste.html", {
+        'room_name': room_name
+    })
