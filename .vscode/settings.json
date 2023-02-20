@@ -1,0 +1,13 @@
+{
+    "python.linting.cwd": "${workspaceFolder}/backend/",
+    "python.linting.enabled": true,
+    "python.linting.prospectorEnabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.prospectorArgs": [
+        "--pylint-config-file",
+        "/etc/pylintrc"
+    ],
+    "cSpell.words": [
+        "viewsets"
+    ],
+}
