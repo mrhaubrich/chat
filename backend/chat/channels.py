@@ -15,8 +15,8 @@ from .models import Message, Room
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = f'chat_{self.room_name}'
+        self.room = self.scope['url_route']['kwargs']['room']
+        self.room_group_name = f'chat_{self.room}'
         self.user = self.scope['user']
         if self.user.is_anonymous:
             await self.close()
@@ -36,12 +36,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
+        user = await self.get_user(self.user.username)
+        room = await self.get_room()
+        await self.create_message(message, user, room)
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': message,
-                'user': self.user.username
+                'message': f'{user.username} diz: {message}',
+                'user': user.username
             }
         )
 
@@ -55,11 +58,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_room(self):
-        return Room.objects.get(name=self.room_name)
+        return Room.objects.get(id=self.room)
     
     @database_sync_to_async
-    def create_message(self, message, user):
-        room = self.get_room()
+    def create_message(self, message, user, room):
         return Message.objects.create(user=user, room=room, message=message)
     
     @database_sync_to_async

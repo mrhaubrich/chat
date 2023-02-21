@@ -16,15 +16,22 @@ Including another URLconf
 from signal import pause
 
 from channels.routing import ProtocolTypeRouter, URLRouter
-from chat.views import CreateUserView, RoomViewSet, index, teste
+from chat.views import (
+    CategoryViewSet, CreateUserView, RoomViewSet, index, teste,
+)
 from django.contrib import admin
 from django.urls import path, re_path
+from rest_framework import routers
 
 from chat import channels as consumers
 
+ROUTER = routers.DefaultRouter()
+
+ROUTER.register('categories', CategoryViewSet, basename='categories')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('rooms/', RoomViewSet.as_view({'get': 'list'})),
+    path('rooms/', RoomViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('rooms/<int:pk>/', RoomViewSet.as_view({'get': 'retrieve'})),
     path('rooms/<int:pk>/join/', RoomViewSet.as_view({'post': 'join'})),
     path('rooms/<int:pk>/leave/', RoomViewSet.as_view({'post': 'leave'})),
@@ -38,5 +45,5 @@ urlpatterns = [
     })),
     path('create_user/', CreateUserView.as_view()),
     path('', index),
-    re_path(r'^chat/(?P<room_name>\w+)/$', teste),
-]
+    re_path(r'^chat/(?P<room>\d+)/$', teste),
+] + ROUTER.urls

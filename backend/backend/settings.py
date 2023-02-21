@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-fpvr_uq7b8m!=35rr)f5ll#7gq((gt&5q6f7n3eqt+gndfe6vf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -129,9 +129,9 @@ AUTH_USER_MODEL = 'chat.User'
 
 CHANNELS_URL = 'ws://localhost:8000/ws/chat/%s/'
 
-CHANNELS_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
 

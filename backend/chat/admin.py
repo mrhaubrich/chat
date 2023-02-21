@@ -6,5 +6,6 @@ from chat import models
 admin.site.register([
     models.User,
     models.Message,
-    models.Room
+    models.Room,
+    models.Category
 ])

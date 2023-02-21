@@ -1,4 +1,7 @@
-from chat.serializers import MessageSerializer, RoomSerializer, UserSerializer
+from chat.models import Category, Room
+from chat.serializers import (
+    CategorySerializer, MessageSerializer, RoomSerializer, UserSerializer,
+)
 from django.conf import settings
 from django.shortcuts import render
 from rest_framework import generics, permissions, status, viewsets
@@ -36,8 +39,13 @@ class RoomViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'])
     def messages(self, request, pk=None):
-        room = self.get_object()
-        return Response(MessageSerializer(room.messages.all(), many=True).data)
+        room: Room = self.get_object()
+        messages = room.messages.all()[:20]
+        messages = messages[::-1]
+        for message in messages:
+            # only first 50 characters
+            message.message = message.message[:50]
+        return Response(MessageSerializer(messages, many=True).data)
 
     @action(detail=True, methods=['post'])
     def send_message(self, request, pk=None):
@@ -59,6 +67,7 @@ class RoomViewSet(viewsets.ModelViewSet):
         room.messages.filter(pk=message_pk).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+    
 
 class ChannelsConnectionView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -79,10 +88,19 @@ class CreateUserView(generics.CreateAPIView):
         instance.set_password(instance.password)
         instance.save()
 
+class CategoryViewSet(viewsets.ModelViewSet):
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
 def index(request):
     return render(request, "chat/index.html")
 
-def teste(request, room_name):
+def teste(request, room):
     return render(request, "chat/teste.html", {
-        'room_name': room_name
+        'room': room
     })

@@ -14,7 +14,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-    
 
 
 class Message(models.Model):
@@ -22,6 +21,7 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     edited_timestamp = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='messages')
 
     def __str__(self):
         return self.message
@@ -33,10 +33,18 @@ class Message(models.Model):
 class Room(models.Model):
     name = models.CharField(max_length=255)
     users = models.ManyToManyField(User, related_name='rooms', blank=True)
-    messages = models.ManyToManyField(Message, related_name='rooms', blank=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
         ordering = ['name']
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    parent = models.ForeignKey(
+        'self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
