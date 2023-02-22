@@ -23,11 +23,11 @@ export async function getServerSideProps() {
   const res = await fetch("http://localhost:8000/rooms/", requestOptions)
   const data = await res.json();
 
-  console.table(data);
+  // console.table(data);
   return {
     props: {
       title: 'Chat',
-      rooms: data,
+      rooms: data.results,
     },
   }
 }

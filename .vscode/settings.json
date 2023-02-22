@@ -8,6 +8,7 @@
         "/etc/pylintrc"
     ],
     "cSpell.words": [
+        "chakra",
         "viewsets"
     ],
     "typescript.tsdk": "frontend/node_modules/typescript/lib",

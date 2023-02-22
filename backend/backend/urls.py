@@ -28,21 +28,18 @@ from chat import channels as consumers
 ROUTER = routers.DefaultRouter()
 
 ROUTER.register('categories', CategoryViewSet, basename='categories')
+ROUTER.register('rooms', RoomViewSet, basename='rooms')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('rooms/', RoomViewSet.as_view({'get': 'list', 'post': 'create'})),
-    path('rooms/<int:pk>/', RoomViewSet.as_view({'get': 'retrieve'})),
-    path('rooms/<int:pk>/join/', RoomViewSet.as_view({'post': 'join'})),
-    path('rooms/<int:pk>/leave/', RoomViewSet.as_view({'post': 'leave'})),
-    path('rooms/<int:pk>/messages/<int:message_pk>/', RoomViewSet.as_view({
-        'patch': 'edit_message',
-        'delete': 'delete_message'
-    })),
-    path('rooms/<int:pk>/messages/', RoomViewSet.as_view({
-        'get': 'messages',
-        'post': 'send_message'
-    })),
+    # path('rooms/<int:pk>/messages/<int:message_pk>/', RoomViewSet.as_view({
+    #     'patch': 'edit_message',
+    #     'delete': 'delete_message'
+    # })),
+    # path('rooms/<int:pk>/messages/', RoomViewSet.as_view({
+    #     'get': 'messages',
+    #     'post': 'send_message'
+    # })),
     path('create_user/', CreateUserView.as_view()),
     path('', index),
     re_path(r'^chat/(?P<room>\d+)/$', teste),

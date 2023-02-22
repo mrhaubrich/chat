@@ -3,6 +3,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 
 // 1. Import the extendTheme function
 import { extendTheme } from '@chakra-ui/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 // 2. Extend the theme to include custom colors, fonts, etc
 const colors = {
@@ -13,7 +14,8 @@ const colors = {
   },
 }
 
-const theme = extendTheme({ colors })
+const theme = extendTheme({ colors });
+const queryClient = new QueryClient();
 
 type MyAppProps = {
   Component: React.ComponentType;
@@ -23,9 +25,12 @@ type MyAppProps = {
 // 3. Pass the `theme` prop to the `ChakraProvider`
 function MyApp({ Component, pageProps }: MyAppProps) {
   return (
-    <ChakraProvider theme={theme}>
-      <Component {...pageProps} />
-    </ChakraProvider>
+
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider theme={theme}>
+        <Component {...pageProps} />
+      </ChakraProvider>
+    </QueryClientProvider>
   )
 }
 

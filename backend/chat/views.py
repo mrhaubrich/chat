@@ -3,16 +3,22 @@ from chat.serializers import (
     CategorySerializer, MessageSerializer, RoomSerializer, UserSerializer,
 )
 from django.conf import settings
+from django.core.paginator import Paginator
 from django.shortcuts import render
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.decorators import action, schema
+from rest_framework.pagination import (
+    LimitOffsetPagination, PageNumberPagination,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_extensions.decorators import paginate
 
 # Create your views here.
 
 @schema(None)
 class RoomViewSet(viewsets.ModelViewSet):
+    max_paginate_by = 20
     permission_classes = [IsAuthenticated]
     serializer_class = RoomSerializer
 
@@ -40,14 +46,18 @@ class RoomViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def messages(self, request, pk=None):
         room: Room = self.get_object()
-        messages = room.messages.all()[:20]
-        messages = messages[::-1]
+        messages = room.messages.all()
+        # if len(messages) > 0:
+        #     paginator = Paginator(messages, 20)
+        #     page = request.GET.get('page')
+        #     messages = paginator.get_page(page)
         for message in messages:
             # only first 50 characters
-            message.message = message.message[:50]
-        return Response(MessageSerializer(messages, many=True).data)
+            message.message = message.message[:10000]
+        messages = self.paginate_queryset(messages)[::-1]
+        return self.get_paginated_response(MessageSerializer(messages, many=True).data)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], url_path='messages/send')
     def send_message(self, request, pk=None):
         room = self.get_object()
         message = request.data.get('message')
