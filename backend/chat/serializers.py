@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework_recursive.fields import RecursiveField
 
 from chat import models
 
@@ -28,12 +27,3 @@ class UserSerializer(serializers.ModelSerializer):
         model = models.User
         fields = ['id', 'username', 'last_seen', 'is_online', 'password']
 
-
-class CategorySerializer(serializers.ModelSerializer):
-    parent = serializers.StringRelatedField()
-    # children is a CategorySerializer
-    children = serializers.ListField(child=RecursiveField())
-
-    class Meta:
-        model = models.Category
-        fields = ['id', 'name', 'parent', 'children']

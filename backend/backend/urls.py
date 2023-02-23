@@ -13,22 +13,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from signal import pause
 
-from channels.routing import ProtocolTypeRouter, URLRouter
-from chat.views import (
-    CategoryViewSet, CreateUserView, RoomViewSet, index, teste,
-)
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import include, path, re_path
 from rest_framework import routers
 
-from chat import channels as consumers
+from chat import views
 
 ROUTER = routers.DefaultRouter()
 
-ROUTER.register('categories', CategoryViewSet, basename='categories')
-ROUTER.register('rooms', RoomViewSet, basename='rooms')
+ROUTER.register('rooms', views.RoomViewSet, basename='rooms')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -40,7 +34,9 @@ urlpatterns = [
     #     'get': 'messages',
     #     'post': 'send_message'
     # })),
-    path('create_user/', CreateUserView.as_view()),
-    path('', index),
-    re_path(r'^chat/(?P<room>\d+)/$', teste),
+    path('create_user/', views.CreateUserView.as_view()),
+    path('', views.index),
+    re_path(r'^chat/(?P<room>\d+)/$', views.teste),
+    path('auth/', include('dj_rest_auth.urls')),
+    
 ] + ROUTER.urls

@@ -7,5 +7,4 @@ admin.site.register([
     models.User,
     models.Message,
     models.Room,
-    models.Category
 ])

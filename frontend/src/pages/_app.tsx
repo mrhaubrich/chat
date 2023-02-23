@@ -1,20 +1,10 @@
 // pages/_app.js
+import theme from '@/components/theme';
 import { ChakraProvider } from '@chakra-ui/react';
-
-// 1. Import the extendTheme function
-import { extendTheme } from '@chakra-ui/react';
+import { SessionProvider } from "next-auth/react";
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-// 2. Extend the theme to include custom colors, fonts, etc
-const colors = {
-  brand: {
-    900: '#1a365d',
-    800: '#153e75',
-    700: '#2a69ac',
-  },
-}
 
-const theme = extendTheme({ colors });
 const queryClient = new QueryClient();
 
 type MyAppProps = {
@@ -23,14 +13,15 @@ type MyAppProps = {
 }
 
 // 3. Pass the `theme` prop to the `ChakraProvider`
-function MyApp({ Component, pageProps }: MyAppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: MyAppProps) {
   return (
-
-    <QueryClientProvider client={queryClient}>
-      <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
-      </ChakraProvider>
-    </QueryClientProvider>
+    <SessionProvider session={session} refetchInterval={5 * 60}>
+      <QueryClientProvider client={queryClient}>
+        <ChakraProvider theme={theme}>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </QueryClientProvider>
+    </SessionProvider>
   )
 }
 

@@ -12,5 +12,6 @@
         "viewsets"
     ],
     "typescript.tsdk": "frontend/node_modules/typescript/lib",
-    "typescript.enablePromptUseWorkspaceTsdk": true
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "dotenv.enableAutocloaking": true
 }

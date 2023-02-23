@@ -1,20 +1,14 @@
-from chat.models import Category, Room
-from chat.serializers import (
-    CategorySerializer, MessageSerializer, RoomSerializer, UserSerializer,
-)
+from chat.models import Room
+from chat.serializers import MessageSerializer, RoomSerializer, UserSerializer
 from django.conf import settings
-from django.core.paginator import Paginator
 from django.shortcuts import render
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.decorators import action, schema
-from rest_framework.pagination import (
-    LimitOffsetPagination, PageNumberPagination,
-)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_extensions.decorators import paginate
 
 # Create your views here.
+
 
 @schema(None)
 class RoomViewSet(viewsets.ModelViewSet):
@@ -76,8 +70,7 @@ class RoomViewSet(viewsets.ModelViewSet):
         room = self.get_object()
         room.messages.filter(pk=message_pk).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-    
+
 
 class ChannelsConnectionView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -89,6 +82,7 @@ class ChannelsConnectionView(generics.GenericAPIView):
             'channels_token': self.get_serializer(request.user).data['channels_token']
         })
 
+
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAdminUser,)
@@ -98,17 +92,10 @@ class CreateUserView(generics.CreateAPIView):
         instance.set_password(instance.password)
         instance.save()
 
-class CategoryViewSet(viewsets.ModelViewSet):
-    serializer_class = CategorySerializer
-    queryset = Category.objects.all()
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
 
 def index(request):
     return render(request, "chat/index.html")
+
 
 def teste(request, room):
     return render(request, "chat/teste.html", {

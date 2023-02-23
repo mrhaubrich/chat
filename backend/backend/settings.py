@@ -38,10 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'chat.apps.ChatConfig',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     'channels',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [
@@ -142,8 +145,26 @@ ASGI_APPLICATION = "backend.asgi.application"
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 20
+    'PAGE_SIZE': 20,
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
 }
 
 # cors allow all
 CORS_ORIGIN_ALLOW_ALL = True
+
+# Access-Control-Allow-Credentials
+CORS_ALLOW_CREDENTIALS = True
+
+# Access-Control-Allow-Headers
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+)
+
+REST_AUTH = {
+    'USE_JWT': True,
+}

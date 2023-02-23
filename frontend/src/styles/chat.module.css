@@ -1,0 +1,64 @@
+.chatContainer {
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border: 1px;
+    border-color: gray.200;
+    border-radius: md;
+    padding: 0;
+    margin: 0;
+    min-width: 100%;
+    height: calc(100vh - 4rem);
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.chatContainer::-webkit-scrollbar {
+    width: 0.5rem;
+}
+
+.chatContainer::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chatContainer::-webkit-scrollbar-thumb {
+    background: rgb(128, 128, 128);
+    border-radius: 0.5rem;
+    outline: 1px solid slategrey;
+    outline-offset: -4px;
+    min-height: 2rem;
+}
+
+.chatContainer::-webkit-scrollbar-thumb:hover {
+    background: rgb(153, 152, 152);
+}
+
+.chatContainer::-webkit-scrollbar-thumb:active {
+    background: rgb(102, 102, 102);
+}
+
+.messageBoxContainer {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    min-width: 100%;
+    height: 2rem;
+}
+
+.messageBox{
+
+    /* size="lg"
+    width={'100%'}
+    height={'100%'}
+    padding={0}
+    margin={0} */
+    size: lg;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
