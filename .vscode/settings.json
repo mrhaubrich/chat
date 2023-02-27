@@ -13,5 +13,5 @@
     ],
     "typescript.tsdk": "frontend/node_modules/typescript/lib",
     "typescript.enablePromptUseWorkspaceTsdk": true,
-    "dotenv.enableAutocloaking": true
+    "dotenv.enableAutocloaking": false
 }

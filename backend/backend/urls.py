@@ -38,5 +38,6 @@ urlpatterns = [
     path('', views.index),
     re_path(r'^chat/(?P<room>\d+)/$', views.teste),
     path('auth/', include('dj_rest_auth.urls')),
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     
 ] + ROUTER.urls

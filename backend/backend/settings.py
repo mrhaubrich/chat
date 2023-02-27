@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'chat.apps.ChatConfig',
+    'oauth2_provider',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -168,3 +170,24 @@ CORS_ALLOW_HEADERS = (
 REST_AUTH = {
     'USE_JWT': True,
 }
+# OIDC_ENABLED = True
+LOGIN_URL='/admin/login/'
+# OAUTH2_PROVIDER = {
+#     "OIDC_ENABLED": True,
+#     'SCOPES': {
+#         'read': 'Read scope',
+#         'write': 'Write scope',
+#         'groups': 'Access to your groups',
+#         'openid': 'OpenID Connect scope',
+
+#     },
+#     # id_token token
+#     "OIDC_RSA_PRIVATE_KEY": 'batatinha',
+#     "OIDC_SUBJECT_TYPES_SUPPORTED": ["private", "public"],
+
+# }
+AUTHENTICATION_BACKENDS = [
+    'oauth2_provider.backends.OAuth2Backend',
+    # Uncomment following if you want to access the admin
+    'django.contrib.auth.backends.ModelBackend',
+]
