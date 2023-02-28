@@ -28,7 +28,7 @@ export async function getServerSideProps(context: any) {
     if (!context.req.cookies.sessionid) {
         return {
             redirect: {
-                destination: `http://127.0.0.1:3000/api/auth/signin?callbackUrl=${context.req.url}`,
+                destination: `http://172.18.100.129:3000/api/auth/signin?callbackUrl=${context.req.url}`,
                 permanent: false,
             },
         };

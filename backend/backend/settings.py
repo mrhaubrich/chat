@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 
+import environ
+
+env = environ.Env()
+env.read_env('.env.example')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -172,22 +177,52 @@ REST_AUTH = {
 }
 # OIDC_ENABLED = True
 LOGIN_URL='/admin/login/'
-# OAUTH2_PROVIDER = {
-#     "OIDC_ENABLED": True,
-#     'SCOPES': {
-#         'read': 'Read scope',
-#         'write': 'Write scope',
-#         'groups': 'Access to your groups',
-#         'openid': 'OpenID Connect scope',
+OAUTH2_PROVIDER = {
+    "OIDC_ENABLED": True,
+    'SCOPES': {
+        'read': 'Read scope',
+        'write': 'Write scope',
+        'groups': 'Access to your groups',
+        'openid': 'OpenID Connect scope',
 
-#     },
-#     # id_token token
-#     "OIDC_RSA_PRIVATE_KEY": 'batatinha',
-#     "OIDC_SUBJECT_TYPES_SUPPORTED": ["private", "public"],
+    },
+    # id_token token
+    "OIDC_RSA_PRIVATE_KEY": 'batatinha',
+    "OIDC_SUBJECT_TYPES_SUPPORTED": ["private", "public"],
+    # "OAUTH2_VALIDATOR_CLASS": "oauthlib.oauth2.RequestValidator",
+    "PKCE_REQUIRED": False,
 
-# }
+}
 AUTHENTICATION_BACKENDS = [
     'oauth2_provider.backends.OAuth2Backend',
     # Uncomment following if you want to access the admin
     'django.contrib.auth.backends.ModelBackend',
 ]
+# APPEND_SLASH = False
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s '
+                        '%(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'oauthlib.oauth2.rfc6749.endpoints.token': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
+}
