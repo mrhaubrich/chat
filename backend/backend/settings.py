@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 import environ
@@ -175,22 +176,33 @@ CORS_ALLOW_HEADERS = (
 REST_AUTH = {
     'USE_JWT': True,
 }
+
+# OIDC_RSA_PRIVATE_KEY = read from file
+OIDC_RSA_PRIVATE_KEY = None
+with open(os.path.join(BASE_DIR, 'oidc.key')) as f:
+    OIDC_RSA_PRIVATE_KEY = f.read()
+
+if not OIDC_RSA_PRIVATE_KEY:
+    raise Exception('OIDC_RSA_PRIVATE_KEY not found')
+
 # OIDC_ENABLED = True
 LOGIN_URL='/admin/login/'
 OAUTH2_PROVIDER = {
     "OIDC_ENABLED": True,
     'SCOPES': {
+        'openid': 'OpenID Connect scope',
         'read': 'Read scope',
         'write': 'Write scope',
         'groups': 'Access to your groups',
-        'openid': 'OpenID Connect scope',
-
+        'profile': 'Access to your profile',
+        'email': 'Access to your email',
+        'account': 'Access to your account',
     },
     # id_token token
-    "OIDC_RSA_PRIVATE_KEY": 'batatinha',
+    "OIDC_RSA_PRIVATE_KEY": OIDC_RSA_PRIVATE_KEY,
     "OIDC_SUBJECT_TYPES_SUPPORTED": ["private", "public"],
-    # "OAUTH2_VALIDATOR_CLASS": "oauthlib.oauth2.RequestValidator",
-    "PKCE_REQUIRED": False,
+    "OAUTH2_VALIDATOR_CLASS": "backend.validators.CustomOAuth2Validator",
+
 
 }
 AUTHENTICATION_BACKENDS = [
