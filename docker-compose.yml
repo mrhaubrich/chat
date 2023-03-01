@@ -1,0 +1,42 @@
+# docker compose with backend and frontend
+name: Docker Compose
+services:
+  frontend:
+    image: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+    networks:
+      - default
+  backend:
+    image: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    networks:
+      - default
+      #NEXTAUTH_URL=http://172.18.100.129:3000
+      # GOOGLE_CLIENT_ID=1077034856264-927ohtfnt4g4di06bvnhjqrmo2kquicr.apps.googleusercontent.com
+      # GOOGLE_CLIENT_SECRET=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
+      # NEXTAUTH_SECRET=hNR0QVA0qQtfS1RjvkxXdiYIV3dELVo9Mc3f7Tsu9ok=
+      # CODE_VERIFIER="OVU5TDYzSTNKVkVVNzVDQTdaQThLWjRQOFBPMVZEN0NZMVgwNFIzWjdCOE8wVE1IRDE2TkIzSj
+    environment:
+      - NEXTAUTH_URL=http://172.18.100.129:3000
+      - GOOGLE_CLIENT_ID=1077034856264-927ohtfnt4g4di06bvnhjqrmo2kquicr.apps.googleusercontent.com
+      - GOOGLE_CLIENT_SECRET=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
+      - NEXTAUTH_SECRET=hNR0QVA0qQtfS1RjvkxXdiYIV3dELVo9Mc3f7Tsu9ok=
+      - CODE_VERIFIER="OVU5TDYzSTNKVkVVNzVDQTdaQThLWjRQOFBPMVZEN0NZMVgwNFIzWjdCOE8wVE1IRDE2TkIzSj
+
+    env_file:
+      - ".env.local"
+
+networks:
+  default:
+    name: my-network
+    external: true

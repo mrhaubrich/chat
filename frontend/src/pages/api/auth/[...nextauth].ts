@@ -1,10 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import NextAuth, { AuthOptions, User } from "next-auth";
+import { env } from "process";
 
-const CODE_VERIFIER = process.env.CODE_VERIFIER;
+const CODE_VERIFIER = env.CODE_VERIFIER;
 const CLIENT_ID = "Ni2SKOdWMLoL3rYDbqlUW3rphQsstZxD06nbzxdd";
 const CLIENT_SECRET = "UDH4eZOpikLYflzAxrZAY0xDetiyPTyVQWGIeDeNrq7m0VJwC2C5QiT642D0aTN1sB2HbPJREfkWjLsArJC0WKbgb0kgPeC6OfzHSUy9oGc6yVNAjHyqI5OOijhNbvbP";
 console.log("CODE_VERIFIER", CODE_VERIFIER);
+console.log('port:', env.PORT);
 type TokenResponse = {
     access_token: string;
     expires_in: number;
@@ -14,7 +16,7 @@ type TokenResponse = {
     id_token: string;
 };
 
-async function postToken(context): Promise<TokenResponse> {
+async function postToken(context: any): Promise<TokenResponse> {
     const code = context.params.code;
 
     const redirect_uri = context.provider.callbackUrl;
@@ -31,7 +33,7 @@ async function postToken(context): Promise<TokenResponse> {
     var config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'http://127.0.0.1:8000/o/token/',
+        url: 'http://172.18.100.129:8000/o/token/',
         headers: {
             'Cache-Control': 'no-cache',
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -39,7 +41,7 @@ async function postToken(context): Promise<TokenResponse> {
         data: data
     };
 
-    const response = await axios(config).catch(function (error) {
+    const response = await axios(config).catch(function (error: any) {
         console.error(error);
     });
     return response.data;
@@ -51,7 +53,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
         providers: [
             {
                 id: "backend",
-                name: "Backend",
+                name: "Meu Auth",
                 type: "oauth",
                 // authorization: "http://172.18.100.129:8000/o/authorize",
                 // token: "http://172.18.100.129:8000/o/token/",
