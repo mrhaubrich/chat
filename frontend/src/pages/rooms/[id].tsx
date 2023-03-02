@@ -1,11 +1,19 @@
+import AuthenticationRequired from '@/components/auth/authRequired';
 import { Chat } from '@/components/chat';
 import { Container } from '@chakra-ui/react';
 import axios from 'axios';
 import { getToken } from 'next-auth/jwt';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { env } from "process";
 import { useState } from 'react';
+
+type RoomProps = {
+    title: string;
+    messages: any;
+    next: string | null;
+    headers: any;
+    chatId: string;
+}
 
 const BACKEND_URL = env.BACKEND_URL;
 
@@ -39,38 +47,29 @@ export async function getServerSideProps(context: any) {
     };
 }
 
-type RoomProps = {
-    title: string;
-    messages: any;
-    next: string | null;
-    headers: any;
-}
-
-function Room({ messages, next, headers }: RoomProps) {
+function Room({ messages, next, headers, chatId }: RoomProps) {
     const router = useRouter();
     const [nextPage, setNextPage] = useState(next);
     const { name } = router.query;
-    const { data, status } = useSession();
+    const id = router.query.id as string;
+    
     return (
-        <>
-            {status === "loading" && <h2>Loading...</h2>}
-            {status === "authenticated" &&
-                <Container minW={'100%'} padding={0} margin={0}>
-                    <div>
-                        <h1>{name}</h1>
-                    </div>
-                    <Chat messages={messages} loadMoreMessages={async () => {
-                        if (nextPage === null) {
-                            return null;
-                        }
-                        const dat = await getMessages(nextPage, headers);
-                        console.log(dat.next);
-                        setNextPage(dat.next);
-                        return dat.results;
-                    }}></Chat>
-                </Container>
-            }
-        </>
+        <AuthenticationRequired showBar={false}>
+            <Container minW={'100%'} padding={0} margin={0}>
+                <div>
+                    <h1>{name}</h1>
+                </div>
+                <Chat messages={messages} chatId={id} loadMoreMessages={async () => {
+                    if (nextPage === null) {
+                        return null;
+                    }
+                    const dat = await getMessages(nextPage, headers);
+                    console.log(dat.next);
+                    setNextPage(dat.next);
+                    return dat.results;
+                }}></Chat>
+            </Container>
+        </AuthenticationRequired>
     );
 }
 

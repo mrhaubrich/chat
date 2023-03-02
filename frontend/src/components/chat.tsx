@@ -1,11 +1,13 @@
 /* eslint-disable react/display-name */
 import style from '@/styles/chat.module.css';
 import {
-    Container, Input, List, ListItem
+    Container, Flex, Input, List, ListItem
 } from "@chakra-ui/react";
 import { useCallback, useRef, useState } from "react";
 import MessageComponent from "./message";
 import { ScrollDownButton } from "./scrollDown";
+
+const BASE_WS_URL = 'ws://172.18.100.129:8000/ws/chat/'
 
 export type Message = {
     id: number;
@@ -19,9 +21,10 @@ export type Message = {
 type ChatProps = {
     messages: Message[];
     loadMoreMessages: () => Promise<Message[] | null>;
+    chatId: string;
 }
 
-export function Chat({ messages, loadMoreMessages }: ChatProps) {
+export function Chat({ messages, loadMoreMessages, chatId }: ChatProps) {
     const [msgs, setMessages] = useState<any[]>(messages);
     const [scrolled, setScrolled] = useState<boolean>(false);
     const [disableScroll, setDisableScroll] = useState<boolean>(false);
@@ -61,22 +64,42 @@ export function Chat({ messages, loadMoreMessages }: ChatProps) {
             const isScrolledToTop = element.scrollTop === (element.clientHeight - element.scrollHeight + 1);
             const isScrolledTo10Percent = element.scrollTop < (element.clientHeight - element.scrollHeight + 1) * 0.90;
             if (isScrolledToTop) {
-                load();
+                setDisableScroll(false);
+                return;
             }
-            else if (isScrolledTo10Percent) {
+            if (isScrolledTo10Percent) {
                 setDisableScroll(true);
                 element.scrollTo(0, lastScrollTop);
-                load();
-                setTimeout(() => {
+                load().then(() => {
                     setDisableScroll(false);
-                }, 1000);
+                }).catch((err) => {
+                    console.error(err);
+                    setDisableScroll(false);
+                });
             }
         }
         setLastScrollTop(element.scrollTop);
     }, [allLoaded, disableScroll, lastScrollTop, load]);
 
+    const ws = new WebSocket(`${BASE_WS_URL}${chatId}/`);
+
+    const handleNewMessage = (e: MessageEvent) => {
+        const data = JSON.parse(e.data);
+        setMessages(msgs.concat(data));
+    };
+    
+    ws.onmessage = handleNewMessage;
+
+    ws.onclose = (e) => {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    ws.onopen = () => {
+        console.log('Chat socket opened');
+    };
+
     return (
-        <>
+        <Flex flexDirection={'column'} maxH={'90vh'}>
             <Container className={style.chatContainer} onScroll={handleScroll}>
                 <List padding={0} margin={0}>
                     {msgs.map((message, index) => {
@@ -93,11 +116,14 @@ export function Chat({ messages, loadMoreMessages }: ChatProps) {
             </Container>
             <Container className={style.messageBoxContainer}>
                 <Input placeholder="Type a message" className={style.messageBox}
-                onKeyUp={(e) => {
-                    if (e.key === 'Enter') {
-                        console.log('Enter pressed');
-                    }
-                }}
+                    onKeyUp={(e) => {
+                        if (e.key === 'Enter') {
+                            ws.send(JSON.stringify({
+                                'message': e.currentTarget.value
+                            }));
+                            e.currentTarget.value = '';
+                        }
+                    }}
                 />
             </Container>
             <ScrollDownButton
@@ -106,6 +132,6 @@ export function Chat({ messages, loadMoreMessages }: ChatProps) {
                     bottomListRef.current?.scrollIntoView({ behavior: 'smooth' });
                 }}
             />
-        </>
+        </Flex>
     );
 }

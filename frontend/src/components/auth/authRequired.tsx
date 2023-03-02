@@ -2,6 +2,7 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 
 type AuthenticationRequiredProps = {
     children: React.ReactNode;
+    showBar?: boolean;
 }
 
 export default function AuthenticationRequired(props: AuthenticationRequiredProps) {
@@ -23,8 +24,13 @@ export default function AuthenticationRequired(props: AuthenticationRequiredProp
             {
                 status === "authenticated" && (
                     <>
-                        <h2>You are signed in as {data?.user?.email}</h2>
-                        <button onClick={() => signOut()}>Sign out</button>
+                        {(props.showBar ?? false) && (
+                            <>
+                                <h2>You are signed in as {data?.user?.email}</h2>
+                                <button onClick={() => signOut()}>Sign out</button>
+                            </>
+                        )
+                        }
                         {props.children}
                     </>
                 )
