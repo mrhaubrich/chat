@@ -2,6 +2,9 @@ from chat.models import Room
 from chat.serializers import MessageSerializer, RoomSerializer, UserSerializer
 from django.conf import settings
 from django.shortcuts import render
+from oauth2_provider.contrib.rest_framework import (
+    TokenHasReadWriteScope, TokenHasScope,
+)
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.decorators import action, schema
 from rest_framework.permissions import IsAuthenticated
@@ -39,6 +42,7 @@ class RoomViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'])
     def messages(self, request, pk=None):
+        print(request.user.username)
         room: Room = self.get_object()
         messages = room.messages.all()
         # if len(messages) > 0:

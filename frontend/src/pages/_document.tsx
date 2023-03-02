@@ -1,8 +1,10 @@
-import theme from '@/components/theme'
-import { ColorModeScript } from '@chakra-ui/react'
-import { Head, Html, Main, NextScript } from 'next/document'
+import theme from '@/components/theme';
+import { ColorModeScript } from '@chakra-ui/react';
+import { Head, Html, Main, NextScript } from 'next/document';
 
-export default function Document() {
+export default function Document(context: any) {
+  // console.log(context);
+  // // await handleSession(context.req);
   return (
     <Html lang="pt-br">
       <Head />

@@ -171,6 +171,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = (
     'accept',
     'accept-encoding',
+    'authorization',
 )
 
 REST_AUTH = {

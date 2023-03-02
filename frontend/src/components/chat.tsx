@@ -18,11 +18,10 @@ export type Message = {
 
 type ChatProps = {
     messages: Message[];
-    loadMoreMessages: (sessionid: string) => Promise<Message[] | null>;
-    sessionid: string;
+    loadMoreMessages: () => Promise<Message[] | null>;
 }
 
-export function Chat({ messages, loadMoreMessages, sessionid }: ChatProps) {
+export function Chat({ messages, loadMoreMessages }: ChatProps) {
     const [msgs, setMessages] = useState<any[]>(messages);
     const [scrolled, setScrolled] = useState<boolean>(false);
     const [disableScroll, setDisableScroll] = useState<boolean>(false);
@@ -33,7 +32,7 @@ export function Chat({ messages, loadMoreMessages, sessionid }: ChatProps) {
 
     const load = useCallback(async () => {
         // simulate API call to load more messages
-        const newMessages = await loadMoreMessages(sessionid);
+        const newMessages = await loadMoreMessages();
         if (!newMessages) {
             // console.warn('No more messages to load');
             setAllLoaded(true);

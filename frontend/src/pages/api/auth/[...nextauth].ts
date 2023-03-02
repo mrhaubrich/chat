@@ -3,6 +3,7 @@ import NextAuth, { AuthOptions, User } from "next-auth";
 import { env } from "process";
 
 const CODE_VERIFIER = env.CODE_VERIFIER;
+const BACKEND_URL = env.BACKEND_URL;
 const CLIENT_ID = "Ni2SKOdWMLoL3rYDbqlUW3rphQsstZxD06nbzxdd";
 const CLIENT_SECRET = "UDH4eZOpikLYflzAxrZAY0xDetiyPTyVQWGIeDeNrq7m0VJwC2C5QiT642D0aTN1sB2HbPJREfkWjLsArJC0WKbgb0kgPeC6OfzHSUy9oGc6yVNAjHyqI5OOijhNbvbP";
 console.log("CODE_VERIFIER", CODE_VERIFIER);
@@ -33,7 +34,7 @@ async function postToken(context: any): Promise<TokenResponse> {
     var config = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'http://172.18.100.129:8000/o/token/',
+        url: `${BACKEND_URL}/o/token/`,
         headers: {
             'Cache-Control': 'no-cache',
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -55,15 +56,15 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                 id: "backend",
                 name: "Meu Auth",
                 type: "oauth",
-                // authorization: "http://172.18.100.129:8000/o/authorize",
-                // token: "http://172.18.100.129:8000/o/token/",
-                userinfo: "http://172.18.100.129:8000/o/userinfo/",
-                // accessTokenUrl: "http://172.18.100.129:8000/o/token/",
+                // authorization: `${BACKEND_URL}/o/authorize`,
+                // token: `${BACKEND_URL}/o/token/`,
+                userinfo: `${BACKEND_URL}/o/userinfo/`,
+                // accessTokenUrl: `${BACKEND_URL}/o/token/`,
                 clientId: CLIENT_ID,
                 clientSecret: CLIENT_SECRET,
-                jwks_endpoint: 'http://172.18.100.129:8000/o/.well-known/jwks.json',
+                jwks_endpoint: `${BACKEND_URL}/o/.well-known/jwks.json`,
                 token: {
-                    // url: "http://172.18.100.129:8000/o/token/",
+                    // url: `${BACKEND_URL}/o/token/`,
                     params: {
                         code_verifier: CODE_VERIFIER,
                     },
@@ -82,9 +83,9 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                     };
                     return user;
                 },
-                wellKnown: 'http://172.18.100.129:8000/o/.well-known/openid-configuration/',
+                wellKnown: `${BACKEND_URL}/o/.well-known/openid-configuration/`,
                 authorization: {
-                    // url: 'http://172.18.100.129:8000/o/authorize/',
+                    // url: `${BACKEND_URL}/o/authorize/`,
                     request(context) {
                         console.log("context", context);
                         return context;
@@ -115,6 +116,38 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
                 }
             }
         },
+        events: {
+            signIn(message) {
+                const accessToken = message.account?.access_token;
+                const tokenType = message.account?.token_type;
+                console.log("accessToken", accessToken)
+                console.log('\n\n\n\n', message, '\n\n\n\n')
+                if (!accessToken || !tokenType) {
+                    return;
+                }
+                const authHeader = `${tokenType} ${accessToken}`;
+
+            },
+            signOut(message) {
+                const authHeader = undefined;
+            }
+        },
+        callbacks: {
+
+            async jwt({ token, user, account, profile, isNewUser }) {
+                if (user) {
+                    token.id = user.id;
+                }
+                if (account) {
+                    token.accessToken = account.access_token;
+                }
+                console.log("------------------- JWT -------------------")
+                console.log(token);
+                console.log("-------------------------------------------")
+                return token;
+            },
+        },
+
     };
     return await NextAuth(req, res, authOptions)
 }
