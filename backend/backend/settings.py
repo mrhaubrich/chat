@@ -45,11 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework.authtoken',
     'corsheaders',
     'channels',
-    'dj_rest_auth',
-    'dj_rest_auth.registration',
     'chat.apps.ChatConfig',
     'oauth2_provider',
 ]

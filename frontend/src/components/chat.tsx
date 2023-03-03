@@ -3,7 +3,7 @@ import style from '@/styles/chat.module.css';
 import {
     Container, Flex, Input, List, ListItem
 } from "@chakra-ui/react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useReducer, useRef } from "react";
 import MessageComponent from "./message";
 import { ScrollDownButton } from "./scrollDown";
 
@@ -24,12 +24,39 @@ type ChatProps = {
     chatId: string;
 }
 
+type ReduxState = {
+    messages?: Message[];
+    scrolled?: boolean;
+    disableScroll?: boolean;
+    lastScrollTop?: number;
+    allLoaded?: boolean;
+}
+
 export function Chat({ messages, loadMoreMessages, chatId }: ChatProps) {
-    const [msgs, setMessages] = useState<any[]>(messages);
-    const [scrolled, setScrolled] = useState<boolean>(false);
-    const [disableScroll, setDisableScroll] = useState<boolean>(false);
-    const [lastScrollTop, setLastScrollTop] = useState<number>(0);
-    const [allLoaded, setAllLoaded] = useState<boolean>(false);
+
+    const [states, setStates] = useReducer((oldStates: ReduxState, newStates: ReduxState) => {
+        return { ...oldStates, ...newStates };
+    }, {
+        messages,
+        scrolled: false,
+        disableScroll: false,
+        lastScrollTop: 0,
+        allLoaded: false,
+    });
+
+    const setMessages = (messages: Message[]) => setStates({ messages });
+    const setScrolled = (scrolled: boolean) => setStates({ scrolled });
+    const setDisableScroll = (disableScroll: boolean) => setStates({ disableScroll });
+    const setLastScrollTop = (lastScrollTop: number) => setStates({ lastScrollTop });
+    const setAllLoaded = (allLoaded: boolean) => setStates({ allLoaded });
+
+    const { messages: msgs, scrolled, disableScroll, lastScrollTop, allLoaded } = states;
+    const wsRef = useRef<WebSocket | null>(null);
+    const ws = wsRef.current ?? new WebSocket(BASE_WS_URL + chatId + '/');
+    // set wsRef.current to ws
+    wsRef.current = ws;
+
+
 
     const bottomListRef = useRef<HTMLUListElement>(null);
 
@@ -42,7 +69,9 @@ export function Chat({ messages, loadMoreMessages, chatId }: ChatProps) {
             return;
         }
         // console.table(newMessages)
-        setMessages(newMessages.concat(msgs));
+        if (msgs) {
+            setMessages(newMessages.concat(msgs));
+        }
     }, [loadMoreMessages, msgs]);
 
     const handleScroll = useCallback(async (e: React.UIEvent<HTMLDivElement>) => {
@@ -57,10 +86,12 @@ export function Chat({ messages, loadMoreMessages, chatId }: ChatProps) {
         }
         if (disableScroll) {
             // console.log('disableScroll')
-            element.scrollTo(0, lastScrollTop);
+            if (lastScrollTop) {
+                element.scrollTo(0, lastScrollTop);
+            }
             return;
         }
-        if (lastScrollTop > element.scrollTop) {
+        if (lastScrollTop && lastScrollTop > element.scrollTop) {
             const isScrolledToTop = element.scrollTop === (element.clientHeight - element.scrollHeight + 1);
             const isScrolledTo10Percent = element.scrollTop < (element.clientHeight - element.scrollHeight + 1) * 0.90;
             if (isScrolledToTop) {
@@ -81,13 +112,13 @@ export function Chat({ messages, loadMoreMessages, chatId }: ChatProps) {
         setLastScrollTop(element.scrollTop);
     }, [allLoaded, disableScroll, lastScrollTop, load]);
 
-    const ws = new WebSocket(`${BASE_WS_URL}${chatId}/`);
-
     const handleNewMessage = (e: MessageEvent) => {
         const data = JSON.parse(e.data);
-        setMessages(msgs.concat(data));
+        if (msgs) {
+            setMessages(msgs.concat(data));
+        }
     };
-    
+
     ws.onmessage = handleNewMessage;
 
     ws.onclose = (e) => {
@@ -99,10 +130,10 @@ export function Chat({ messages, loadMoreMessages, chatId }: ChatProps) {
     };
 
     return (
-        <Flex flexDirection={'column'} maxH={'90vh'}>
+        <Flex flexDirection={'column'}>
             <Container className={style.chatContainer} onScroll={handleScroll}>
                 <List padding={0} margin={0}>
-                    {msgs.map((message, index) => {
+                    {msgs && msgs.map((message, index) => {
                         return (
                             <ListItem key={index}
                                 id={msgs[msgs.length - 1].id === message.id ? 'lastMsg' : ''}

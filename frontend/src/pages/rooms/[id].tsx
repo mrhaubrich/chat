@@ -55,7 +55,7 @@ function Room({ messages, next, headers, chatId }: RoomProps) {
     
     return (
         <AuthenticationRequired showBar={false}>
-            <Container minW={'100%'} padding={0} margin={0}>
+            <Container maxWidth={'100%'} margin={0} height={"100%"}>
                 <div>
                     <h1>{name}</h1>
                 </div>

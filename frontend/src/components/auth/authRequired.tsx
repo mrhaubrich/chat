@@ -24,7 +24,7 @@ export default function AuthenticationRequired(props: AuthenticationRequiredProp
             {
                 status === "authenticated" && (
                     <>
-                        {(props.showBar ?? false) && (
+                        {(props.showBar ?? true) && (
                             <>
                                 <h2>You are signed in as {data?.user?.email}</h2>
                                 <button onClick={() => signOut()}>Sign out</button>

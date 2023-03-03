@@ -1,4 +1,4 @@
-from chat.models import Room
+from chat.models import Message, Room
 from chat.serializers import MessageSerializer, RoomSerializer, UserSerializer
 from django.conf import settings
 from django.shortcuts import render
